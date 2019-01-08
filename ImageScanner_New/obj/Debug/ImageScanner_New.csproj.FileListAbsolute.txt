@@ -1,0 +1,10 @@
+H:\ImageScanner_New\ImageScanner_New\ImageScanner_New\bin\Debug\ImageScanner_New.exe.config
+H:\ImageScanner_New\ImageScanner_New\ImageScanner_New\bin\Debug\ImageScanner_New.exe
+H:\ImageScanner_New\ImageScanner_New\ImageScanner_New\bin\Debug\ImageScanner_New.pdb
+H:\ImageScanner_New\ImageScanner_New\ImageScanner_New\obj\Debug\ImageScanner_New.csprojAssemblyReference.cache
+H:\ImageScanner_New\ImageScanner_New\ImageScanner_New\obj\Debug\ImageScanner_New.main.resources
+H:\ImageScanner_New\ImageScanner_New\ImageScanner_New\obj\Debug\ImageScanner_New.Properties.Resources.resources
+H:\ImageScanner_New\ImageScanner_New\ImageScanner_New\obj\Debug\ImageScanner_New.csproj.GenerateResource.cache
+H:\ImageScanner_New\ImageScanner_New\ImageScanner_New\obj\Debug\ImageScanner_New.csproj.CoreCompileInputs.cache
+H:\ImageScanner_New\ImageScanner_New\ImageScanner_New\obj\Debug\ImageScanner_New.exe
+H:\ImageScanner_New\ImageScanner_New\ImageScanner_New\obj\Debug\ImageScanner_New.pdb

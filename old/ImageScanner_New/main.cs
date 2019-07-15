@@ -19,19 +19,6 @@ namespace ImageScanner_New
         /// </summary>
         private ImageScanner ims;
 
-        /// <summary>
-        /// Форма ожидалки
-        /// </summary>
-        private waiter wf;
-
-        /// <summary>
-        /// Список картинок
-        /// </summary>
-        ImageList il;
-
-        /// <summary>
-        /// Конструктор формы
-        /// </summary>
         public main()
         {
             InitializeComponent();
@@ -46,37 +33,6 @@ namespace ImageScanner_New
         {
             //Инициализируем класс поиска дублей
             ims = new ImageScanner();
-            //Инициализируем форму ожидалки
-            wf = new waiter();
-
-            //Добавляем обработчик события обновления прогресса
-            ims.onUpdateScan += Ims_onUpdateScan;
-
-
-
-            //Инициализируем список картинок, и проставляем его параметры
-            il = new ImageList()
-            {
-                ColorDepth = ColorDepth.Depth32Bit,
-                TransparentColor = Color.Transparent,
-                ImageSize = new Size(128, 128)
-            };
-
-            //Проставляем список картинок
-            duplicatesList.LargeImageList = il;
-        }
-
-        /// <summary>
-        /// Обработчик события обновления прогресса сканирования
-        /// </summary>
-        /// <param name="maxScan">Максмальное значение прогрессбара сканирования</param>
-        /// <param name="valScan">Текущее значение прогрессбара сканирования</param>
-        private void Ims_onUpdateScan(int maxScan, int valScan)
-        {
-            //Обновляем инфу о прогрессе сканирования в ожидалке
-            this.BeginInvoke(new Action(() => {
-                wf.setValues(maxScan, valScan, -1, -1);
-            }));
         }
 
         /// <summary>
@@ -87,53 +43,17 @@ namespace ImageScanner_New
             //Если папка для сканирования есть
             if (Directory.Exists(scanPathTextBox.Text))
             {
-                //Инициализируем форму ожидалки
-                wf.setValues(1, 0, 1, 0);
-                //Блокируем текущую форму
-                this.Enabled = false;
-                //Отображаем форму ожидалки
-                wf.Show();
-                //Переносим форму ожидалки на передний план
-                wf.BringToFront();
 
                 new Thread(() => { 
                     //Получаем список дубликатов
                     var duList = ims.findDuplicates(scanPathTextBox.Text);
                     //Выполняем это в UI потоке, т.к. работа с контроллами
                     this.BeginInvoke(new Action(() => {
-                        // Заполняем список изображений картинками
-                        fillImageList(duList);
                         //Отображаем найденные дубли
                         visualizeDoublicates(duList);
-                        //Скрываем форму ожидалки
-                        wf.Hide();
-                        //заного включаем текущую форму
-                        this.Enabled = true;
-                        //Выводим попап с инфой о завершении сканирования
-                        MessageBox.Show("Сканирование на дубликаты успешно завершено.");
                     }));
                 }).Start();
             }
-        }
-
-        /// <summary>
-        /// Заполняем список изображений картинками
-        /// </summary>
-        /// <param name="duList">Список дублей</param>
-        private void fillImageList(List<List<FileScanInfo>> duList)
-        {
-            //Очищаем список изображений
-            il.Images.Clear();
-
-            //Проходимся по списку
-            foreach (var du in duList)
-            {
-                //Проходимся по путям, с похожими картинками
-                foreach (var file in du)
-                    //Добавляем картинку в коллекцию
-                    il.Images.Add(file.imageId, file.preview);
-            }
-                
         }
 
         /// <summary>
@@ -142,14 +62,17 @@ namespace ImageScanner_New
         /// <param name="duList">Список дублей</param>
         private void visualizeDoublicates(List<List<FileScanInfo>> duList)
         {
+            int imageId = 0;
+            string sImageId;
             //длинна исходного пути
             int defaultPathLength = scanPathTextBox.Text.Length;
+            Bitmap pic;
             ListViewGroup group;
-            int i = 0;
 
 
             //Очищаем списки перед заполнением
             duplicatesList.Groups.Clear();
+            ImagesList.Images.Clear();
             duplicatesList.Items.Clear();
 
             //Проходимся по списку
@@ -159,31 +82,40 @@ namespace ImageScanner_New
                 group = new ListViewGroup("");
                 //Добавляем группу
                 duplicatesList.Groups.Add(group);
-                
 
                 //Проходимся по путям, с похожими картинками
                 foreach (var file in du)
                 {
+                    //Получаем id картинки в виде строки
+                    sImageId = imageId.ToString();
+                    //Получаем картинку
+                    pic = new Bitmap(file.path);
+
+                    //Добавляем картинку в коллекцию
+                    ImagesList.Images.Add(sImageId, pic);
+
                     //Добавляем элемент в коллекцию
                     duplicatesList.Items.Add(new ListViewItem(
-                        file.path.Substring(defaultPathLength) + "\r\n" + file.imageSize,
-                        file.imageId,
+                        file.path.Substring(defaultPathLength) + $"\r\n ({pic.Width} X {pic.Height})",
+                        sImageId,
                         group)
                     {
                         //В тег пишем инфу о теге
                         Tag = file.tag
                     });
-                }
 
-                //Обновляем прогресс визуализации в ожидалке
-                wf.setValues(-1, -1, duList.Count, i);
-                //Обновляем счётчик прогресса
-                i++;
-                
+                    //Увеличиваем номер картинки
+                    imageId++;
+
+                    //Закрываем картинку
+                    pic.Dispose();
+                }
             }
 
             //Автоматическое выделение всех кроме первого элементов в группах
             autoSelect();
+
+            MessageBox.Show("Сканирование на дубликаты успешно завершено.");
         }
 
         /// <summary>
@@ -218,10 +150,8 @@ namespace ImageScanner_New
                     }
                 }
 
-                //Если выделение не выходит за рамки
-                if(gr.Items.Count > selId)
-                    //Убираем выделение на самой большой картинке
-                    gr.Items[selId].Checked = false;
+                //Убираем выделение на самой большой картинке
+                gr.Items[selId].Checked = false;
             }
         }
 

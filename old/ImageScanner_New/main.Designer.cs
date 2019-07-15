@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.scanButton = new System.Windows.Forms.Button();
             this.scanPathTextBox = new System.Windows.Forms.TextBox();
             this.duplicatesList = new System.Windows.Forms.ListView();
+            this.ImagesList = new System.Windows.Forms.ImageList(this.components);
             this.removeButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -50,17 +52,24 @@
             this.scanPathTextBox.Name = "scanPathTextBox";
             this.scanPathTextBox.Size = new System.Drawing.Size(617, 20);
             this.scanPathTextBox.TabIndex = 2;
-            this.scanPathTextBox.Text = "J:\\newFolder\\ImagePack";
+            this.scanPathTextBox.Text = "E:\\БЕКАП\\newFolder\\aaa\\";
             // 
             // duplicatesList
             // 
             this.duplicatesList.CheckBoxes = true;
             this.duplicatesList.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.duplicatesList.LargeImageList = this.ImagesList;
             this.duplicatesList.Location = new System.Drawing.Point(0, 83);
             this.duplicatesList.Name = "duplicatesList";
             this.duplicatesList.Size = new System.Drawing.Size(722, 548);
             this.duplicatesList.TabIndex = 3;
             this.duplicatesList.UseCompatibleStateImageBehavior = false;
+            // 
+            // ImagesList
+            // 
+            this.ImagesList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.ImagesList.ImageSize = new System.Drawing.Size(128, 128);
+            this.ImagesList.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // removeButton
             // 
@@ -94,6 +103,7 @@
         private System.Windows.Forms.Button scanButton;
         private System.Windows.Forms.TextBox scanPathTextBox;
         private System.Windows.Forms.ListView duplicatesList;
+        private System.Windows.Forms.ImageList ImagesList;
         private System.Windows.Forms.Button removeButton;
     }
 }
